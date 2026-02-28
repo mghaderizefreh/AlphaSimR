@@ -1,3 +1,5 @@
+*fixed bug in `getGvE` with multiple traits.
+
 # AlphaSimR 2.1.0
 
 *changed R6 and methods from Depends to Imports to match current best practices for R packages
@@ -209,7 +211,7 @@
 *removed lazyData field in DESCRIPTION
 
 # AlphaSimR 1.0.0
-  
+
 *AlphaSimR manuscript has been published in G3 (citation added)
 
 *changed to a Gamma Sprinkling model for crossovers, default is still a Gamma model
@@ -280,7 +282,7 @@
 
 *the `c` function now merges individuals for MapPop objects (was chromosomes before)
 
-*the `cChr` function new merges chromosomes for MapPop objects 
+*the `cChr` function new merges chromosomes for MapPop objects
 
 *fixed broken SimParam_addStructuredSnpChip
 
@@ -447,4 +449,4 @@
 *Added `runMacs2` as a wrapper for `runMacs`
 
 *Fixed error when using H2 in SimParam_setVarE
-    
+
