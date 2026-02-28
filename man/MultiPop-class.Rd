@@ -3,14 +3,14 @@
 \docType{class}
 \name{MultiPop-class}
 \alias{MultiPop-class}
-\alias{[,MultiPop-method}
+\alias{[,MultiPop,ANY,ANY,ANY-method}
 \alias{[[,MultiPop-method}
 \alias{c,MultiPop-method}
 \alias{length,MultiPop-method}
 \alias{isMultiPop}
 \title{Multi-Population}
 \usage{
-\S4method{[}{MultiPop}(x, i)
+\S4method{[}{MultiPop,ANY,ANY,ANY}(x, i)
 
 \S4method{[[}{MultiPop}(x, i)
 
@@ -33,7 +33,7 @@ It is designed to behave like a list of populations.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{[}: Extract MultiPop by index
+\item \code{x[i}: Extract MultiPop by index
 
 \item \code{[[}: Extract Pop by index
 
