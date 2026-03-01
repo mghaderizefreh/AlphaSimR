@@ -860,14 +860,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// tc_ptr_summary2
-Rcpp::List tc_ptr_summary2(const SEXP tc);
-RcppExport SEXP _AlphaSimR_tc_ptr_summary2(SEXP tcSEXP) {
+// tc_xptr_summary2
+Rcpp::List tc_xptr_summary2(const SEXP tc);
+RcppExport SEXP _AlphaSimR_tc_xptr_summary2(SEXP tcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const SEXP >::type tc(tcSEXP);
-    rcpp_result_gen = Rcpp::wrap(tc_ptr_summary2(tc));
+    rcpp_result_gen = Rcpp::wrap(tc_xptr_summary2(tc));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -928,7 +928,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_AlphaSimR_getNumThreads", (DL_FUNC) &_AlphaSimR_getNumThreads, 0},
     {"_AlphaSimR_packHaplo", (DL_FUNC) &_AlphaSimR_packHaplo, 3},
     {"_AlphaSimR_MaCS", (DL_FUNC) &_AlphaSimR_MaCS, 6},
-    {"_AlphaSimR_tc_ptr_summary2", (DL_FUNC) &_AlphaSimR_tc_ptr_summary2, 1},
+    {"_AlphaSimR_tc_xptr_summary2", (DL_FUNC) &_AlphaSimR_tc_xptr_summary2, 1},
     {NULL, NULL, 0}
 };
 
