@@ -85,6 +85,45 @@ test_that("asCategorical_converts_correctly", {
   expect_equal(cont2, cont2Exp)
 })
 
+test_that("asPoisson_converts_correctly", {
+  cont = matrix(data = c(-1, 0, 1, 0, 1, 2), nrow = 3, ncol = 2)
+
+  set.seed(100)
+  expSingle = matrix(rpois(n = nrow(cont), lambda = exp(cont[, 1])))
+  set.seed(100)
+  expect_equal(asPoisson(x = cont[, 1]), expSingle)
+
+  set.seed(101)
+  expShift = matrix(rpois(n = nrow(cont), lambda = exp(log(2) + cont[, 1])))
+  set.seed(101)
+  expect_equal(asPoisson(x = cont[, 1], intercept = log(2)), expShift)
+
+  set.seed(102)
+  expMulti = cbind(
+    rpois(n = nrow(cont), lambda = exp(cont[, 1])),
+    rpois(n = nrow(cont), lambda = exp(log(3) + cont[, 2]))
+  )
+  set.seed(102)
+  expect_equal(
+    asPoisson(x = cont, intercept = c(0, log(3))),
+    expMulti
+  )
+
+  set.seed(103)
+  expPartial = cbind(
+    cont[, 1],
+    rpois(n = nrow(cont), lambda = exp(log(3) + cont[, 2]))
+  )
+  set.seed(103)
+  expect_equal(
+    asPoisson(x = cont, intercept = list(NULL, log(3))),
+    expPartial
+  )
+
+  expect_error(asPoisson(x = cont, intercept = 0))
+  expect_error(asPoisson(x = cont, intercept = TRUE))
+})
+
 test_that("pop@gv and genParam(pop)@gv match", {
   # This test is here since we have two different code paths for these two
   # functionalities and we had one bug in one code path

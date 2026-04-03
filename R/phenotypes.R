@@ -557,47 +557,75 @@ asCategorical = function(x, p = NULL, mean = 0, var = 1,
 
 #' @title Convert a normal (Gaussian) trait to a count (Poisson) trait
 #' @param x matrix, values for one or more traits (if not a matrix,
-#'   we cast to a matrix)
-#' @param TODO numeric or list, when numeric, provide a vector of TODO
+#'   we cast to a matrix).
+#' @param intercept \code{NULL}, numeric or list, trait intercept(s) on the log
+#'   scale; when \code{NULL} an intercept of 0 is assumed, when numeric
+#'   intercepts for all traits in \code{x} must be provided, and when list
+#'   intercepts for all traits in \code{x} must be provided with the possibility
+#'   to pass a \code{NULL} list node to skip the conversion for a trait
+#'   (see examples).
 #' @return matrix of values with some traits recoded as counts
 #' @details If input trait is normal (Gaussian) then this function generates a
-#'   count trait according to the Poisson generalised linear model.
+#'   count trait according to the Poisson generalised linear model. Count values
+#'   are drawn from a Poisson distribution with rate
+#'   \code{exp(intercept + x)}.
 #' @examples
+#' #Simulate a founder pop, set latent trait parameters, and create a population
 #' founderPop = quickHaplo(nInd=20, nChr=1, segSites=10)
 #' SP = SimParam$new(founderPop)
 #' \dontshow{SP$nThreads = 1L}
-#' SP$addTraitA(nQtlPerChr = 10, mean = c(0, 0), var = c(1, 2),
+#' trtMeanLog = c(0, 0)
+#' trtVarGLog = c(1, 2)
+#' SP$addTraitA(nQtlPerChr = 10, mean = trtMeanLog, var = trtVarGLog,
 #'              corA = matrix(data = c(1.0, 0.6,
 #'                                     0.6, 1.0), ncol = 2))
+#' trtVarELog = c(1, 1)
+#' trtVarPLog = trtVarGLog + trtVarELog
+#' SP$setVarE(varE = trtVarELog)
 #' pop = newPop(founderPop)
-#' pop = setPheno(pop, varE = c(1, 1))
 #' pheno(pop)
+#'
 #' #Convert a single input trait
-#' asCount(x = pheno(pop)[, 2])
-#' asCount(x = pheno(pop)[, 2], TODO = c(-1, 0, 1))
-#' asCount(x = pheno(pop)[, 2], TODO = c(-Inf, -1, 0, 1, Inf))
+#' asPoisson(x = pheno(pop)[, 1])
+#' asPoisson(x = pheno(pop)[, 2], intercept = -trtVarPLog[2]/2)
+#'
 #' #Convert multiple input traits
-#' try(asCount(x = pheno(pop)))
-#' asCount(x = pheno(pop),
-#'           TODO = list(NULL,
-#'                       ???))
-#' TODO export
-# asCount = function(x, TODO = 10) {
-#   if (!is.matrix(x)) {
-#     x = as.matrix(x)
-#   }
-#   nTraits = ncol(x)
-#   if (is.numeric(TODO)) {
-#     if (nTraits > 1) {
-#       stop("When x contains more than one column, you must supply a list of TODO! See examples.")
-#     }
-#     TODO = list(TODO)
-#   }
-#   for (trt in 1:nTraits) {
-#     if (!is.null(TODO[[trt]])) {
-# TODO: need to think what to do with an intercept and lambda
-#       x[, trt] = round(exp(x[, trt]))
-#     }
-#   }
-#   return(x)
-# }
+#' try(asPoisson(x = pheno(pop), intercept = 0))
+#' asPoisson(x = pheno(pop), intercept = c(0, -trtVarPLog[2]/2))
+#' asPoisson(x = pheno(pop), intercept = list(0, NULL))
+#'
+#' #Store the recoded trait manually
+#' pheno(pop)
+#' pop@pheno[, 1] = asPoisson(x = pheno(pop)[, 1])
+#' pheno(pop)
+#' @export
+asPoisson <- function(x, intercept = NULL) {
+  stop("Come back to this - we need to rethink intercept vs lambda and VarE on latent scale vs variance from Poisson process itself!")
+  if (!is.matrix(x)) {
+    x = as.matrix(x)
+  }
+  nTraits = ncol(x)
+  if (is.null(intercept)) {
+    intercept = rep(x = 0, times = nTraits)
+  }
+  if (is.numeric(intercept)) {
+    if (length(intercept) != nTraits) {
+      stop("You must supply intercept for all traits in x!")
+    }
+    for (trt in 1:nTraits) {
+      x[, trt] = rpois(n = nrow(x), lambda = exp(intercept[trt] + x[, trt]))
+    }
+  } else if (is.list(intercept)) {
+    if (length(intercept) != nTraits) {
+      stop("You must supply intercept for all traits in x!")
+    }
+    for (trt in 1:nTraits) {
+      if (!is.null(intercept[[trt]])) {
+        x[, trt] = rpois(n = nrow(x), lambda = exp(intercept[[trt]] + x[, trt]))
+      }
+    }
+  } else {
+    stop("intercept must be NULL, numeric, or list!")
+  }
+  return(x)
+}
